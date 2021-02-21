@@ -1,29 +1,38 @@
 const inquirer = require( 'inquirer' );
 // module to connect to database
-const db = require( './app/connection' )('favourites','r00tr00t')
+const db = require( './app/connection' )('content_management_systems','skotkalb')
 
-async function main(){
+ async function main(){
     // get new song info
-    const newSong = await inquirer.prompt([
-        { name: "title",    message: "What is the title of the song?" },
-        { name: "artist",   message: "What is the artist?" },
-        { name: "genre",    message: "What is the genre?" },
-        { name: "rating",   message: "What is the rating (1-10)?" },
-    ]);
+    const firstQuestion =  inquirer.prompt([
+        { name: "firstChoice",    message: "What would you like to do", type: "list", choices:["View All Employees","Update Employees",] },
+    ])
 
-    const myResult = await db.query( 
-        "INSERT INTO favourite_songs (title,artist,genre,rating) VALUES(?,?,?,?) ",
-        [newSong.title, newSong.artist, newSong.genre, newSong.rating] );
-    console.log( `insert result:`, myResult )
-    
-    const mySongs = await db.query( "SELECT * FROM favourite_songs" );
-    for( let i=0; i<mySongs.length; i++ ){
-        const song = mySongs[i];
-        console.log( `${i}: ${song.title}/${song.artist}  [*${song.genre}*] ${song.rating}/10 `)
+    const response = await promptUser();  
+    if (response.firstChoice === "View All Employees"){
+        const myResult = await db.query( "SELECT * FROM Employees",);
+        console.log( `insert result:`, myResult )
     }
+    else{
+        const updateEmployees =  inquirer.prompt([
+            { name: "firstChoice",    message: "In Which department?", type: "list", choices:["Sales","Engineering","Finance","Legal",] },
+        ])
+    }
+
+ }
+    // const myResult = await db.query( 
+    //     "INSERT INTO favourite_songs (title,artist,genre,rating) VALUES(?,?,?,?) ",
+    //     [newSong.title, newSong.artist, newSong.genre, newSong.rating] );
+    // console.log( `insert result:`, myResult )
+    
+    // const mySongs = await db.query( "SELECT * FROM favourite_songs" );
+    // for( let i=0; i<mySongs.length; i++ ){
+    //     const song = mySongs[i];
+    //     console.log( `${i}: ${song.title}/${song.artist}  [*${song.genre}*] ${song.rating}/10 `)
+    // }
     // console.log( mySongs );
 
     await db.close();
 
-}
+
 main();
