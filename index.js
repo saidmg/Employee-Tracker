@@ -330,4 +330,80 @@ async function updateEmployeeDepartment() {
     await db.query(`UPDATE employee Set role_id = ${resultOfDep[0].id} WHERE employee.id = ${employeeid};`)
     console.log("Department was successfully changed!")
 }
+// remove question
+
+function removeChoice() {
+  
+    return inquirer.prompt([
+        {
+            name: "removeChoice1", message: "What would you like to remove", type: "list", choices: ["Role", "Employee", "Department"]
+        },
+    ])
+}
+
+// remove employe
+
+
+async function removeEmployee() {
+    const arr = []
+    await db.query('SELECT first_name,last_name FROM employee', async (err, res) => {
+        res.forEach(({ first_name, last_name }) => {
+            arr.push(`${first_name} ${last_name}`)
+        })
+        const answer = await inquirer.prompt([
+            {
+                message: 'Which employee would you like to remove?',
+                type: 'list',
+                choices: arr,
+                name: 'name'
+            }
+        ])
+        let a = answer.name
+        let b = a.split(" ")
+        await db.query(`DELETE FROM employee WHERE first_name = '${b[0]}' AND last_name = '${b[1]}'`)
+    })
+}
+
+
+// remove manager
+
+async function removeRole() {
+    const arr = []
+    await db.query('SELECT title FROM role', async (err, res) => {
+        res.forEach(({ title }) => {
+            arr.push(`${title}`)
+        })
+        const answer = await inquirer.prompt([
+            {
+                message: 'Which role would you like to remove?',
+                type: 'list',
+                choices: arr,
+                name: 'name'
+            }
+        ])
+        await db.query(`DELETE FROM role WHERE title = '${answer.name}'`)
+    })
+}
+
+//remove department
+async function removeDepartment() {
+    const arr = []
+    await db.query('SELECT department_name FROM department', async (err, res) => {
+        res.forEach(({ department_name }) => {
+            arr.push(`${department_name}`)
+        })
+        const answer = await inquirer.prompt([
+            {
+                message: 'Which department would you like to remove?',
+                type: 'list',
+                choices: arr,
+                name: 'name'
+            }
+        ])
+
+       return await db.query(`DELETE FROM department WHERE department_name = '${answer.name}'`)
+    })
+    
+}
+
  
