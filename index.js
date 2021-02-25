@@ -31,9 +31,9 @@ async function viewEmployee() {
 // select  department choise
 async function depChoice() {
     const value = await db.query('select * from department')
-    console.log(value)
+    // console.log(value)
     let departmentArray = []
- 
+
     value.forEach(({ department_name }) => {
         departmentArray.push(`${department_name}`)
     })
@@ -47,14 +47,14 @@ async function depChoice() {
 // View employee BY Departments
 async function viewEmployeeByDepartments() {
     let result = await depChoice()
- 
-    let array1=[]
+
+    let array1 = []
     let x = await db.query(`select employee.first_name,last_name from employee left join role on (employee.role_id=role.id) inner join department on 
     (role.department_id=department.id) where department_name='${result.depChoice1}'`);
-    x.forEach(({first_name,last_name}) =>{
+    x.forEach(({ first_name, last_name }) => {
         array1.push(`${first_name} ${last_name}`)
-    }    )
-   
+    })
+
     console.log(array1)
 
 
@@ -67,7 +67,7 @@ async function managerChoice() {
     value.forEach(({ first_name }) => {
         managerArray.push(first_name)
     })
-   
+
 
     let result = await inquirer.prompt([
         { name: "managerChoice1", message: "Which manager ?", type: "list", choices: managerArray }
@@ -77,7 +77,7 @@ async function managerChoice() {
     result1.forEach(({ role_id }) => {
         array1 += role_id
     })
-  
+
     let result2 = await db.query(`select manager_id from employee where role_id= '${array1}' `)
     return result2
 
@@ -91,10 +91,11 @@ async function viewEmployeeByManager() {
     result.forEach(({ manager_id }) => {
         array1 += manager_id
     })
-  
+
     // console.log(result)
     const x = await db.query(`select employee.first_name,last_name from employee where role_id = '${array1}'`);
-  
+    console.log(x)
+
 }
 
 
@@ -103,6 +104,7 @@ async function viewEmployeeByManager() {
 
 async function viewDepartment() {
     let result = await db.query(`select department_name from department`)
+    console.log(result)
 
 }
 
@@ -117,7 +119,7 @@ async function viewRole() {
 
 async function salaryDepartment() {
     let result = await db.query(`SELECT SUM(salary) FROM role left join department on (role.department_id=department.id)`)
- 
+console.log(result)
 }
 // Update/Add/Delete question
 
@@ -178,24 +180,26 @@ async function addEmployeeTable() {
 
         })
         manager = Number(manager)
-        console.log(manager)
+        // console.log(manager)
 
     }
 
     let roll = []
-  
+
     rolId = await db.query(`Select id from role where title ='${questions.role}'`)
- 
+
     rolId.forEach(({ id }) => {
         roll.push(id)
 
     })
     roll = Number(roll)
-   
+
     await db.query('INSERT INTO employee VALUES(?,?,?,?,?)', [0, questions.firstName, questions.lastName, roll, manager])
 
     let viewEmployee = await db.query(`select * from employee`);
-}
+    console.log(`New Employee has been added `)
+        // return console.log(`New Employee has been added `)
+    }
 // Add  Role
 
 async function addRole() {
@@ -204,7 +208,7 @@ async function addRole() {
     departments.forEach(({ department_name }) => {
         depArray.push(department_name)
     })
-  
+
     const answer = await inquirer.prompt([
         {
             message: 'What is the title of the role?',
@@ -229,7 +233,7 @@ async function addRole() {
     })
     depId = Number(depId[0])
     let finalResult = await db.query('INSERT INTO role VALUES     (?,?,?,?)', [0, answer.title, answer.salary, depId])
-    return console.log(`${finalResult} has been added to the Roles`)
+    return console.log(`New Role has been added to the Roles`)
 }
 
 // Add Department
@@ -333,7 +337,7 @@ async function updateEmployeeDepartment() {
 // remove question
 
 function removeChoice() {
-  
+
     return inquirer.prompt([
         {
             name: "removeChoice1", message: "What would you like to remove", type: "list", choices: ["Role", "Employee", "Department"]
@@ -360,7 +364,14 @@ async function removeEmployee() {
         ])
         let a = answer.name
         let b = a.split(" ")
+        console.log("before deleting")
+        await db.query(`UPDATE employee set manager_id = null where first_name = '${b[0]}' AND last_name = '${b[1]}' `)
+        console.log("before deleting2")
+
         await db.query(`DELETE FROM employee WHERE first_name = '${b[0]}' AND last_name = '${b[1]}'`)
+        console.log("after deleting")
+
+        return
     })
 }
 
@@ -401,9 +412,9 @@ async function removeDepartment() {
             }
         ])
 
-       return await db.query(`DELETE FROM department WHERE department_name = '${answer.name}'`)
+        return await db.query(`DELETE FROM department WHERE department_name = '${answer.name}'`)
     })
-    
+
 }
 
 
@@ -423,7 +434,7 @@ async function main() {
 
 
     const response1 = await askQuestion();
- 
+
 
     switch (response1.firstChoice) {
         case "View Details":
@@ -442,7 +453,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -460,7 +471,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -491,7 +502,7 @@ async function main() {
                             await main()
                         }
                         case false: {
-                            console.log('HAveeee good day')
+                            console.log('App is Closing')
                             break;
 
                         }
@@ -510,7 +521,7 @@ async function main() {
                             await main()
                         }
                         case false: {
-                            console.log('HAveeee good day')
+                            console.log('App is Closing')
                             break;
 
                         }
@@ -527,7 +538,7 @@ async function main() {
                             await main()
                         }
                         case false: {
-                            console.log('HAveeee good day')
+                            console.log('App is Closing')
                             break;
 
                         }
@@ -537,7 +548,6 @@ async function main() {
                 }
 
             }
-            // choices: ["Employees", "Departments", "Roles", "total utilized budget of a department"]
 
             break;
         case "Update/Add/Delete": {
@@ -557,7 +567,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -574,7 +584,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -591,7 +601,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -614,7 +624,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -632,7 +642,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -643,13 +653,12 @@ async function main() {
                     }
                     break;
                 }
+
                 case 'Remove': {
-                    console.log("test1")
                     let remove = await removeChoice()
-                    console.log("test2")
                     switch (remove.removeChoice1) {
                         case "Role": {
-                          removeRole()
+                            await removeRole()
                             const x = await lastQuestion()
                             console.log(x.lastQ)
                             switch (x.lastQ) {
@@ -657,7 +666,7 @@ async function main() {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -668,14 +677,14 @@ async function main() {
 
                         case "Employee": {
                             await removeEmployee()
-                            const x =  lastQuestion()
+                            const x = await lastQuestion()
                             console.log(x.lastQ)
                             switch (x.lastQ) {
                                 case true: {
                                     await main()
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -685,20 +694,16 @@ async function main() {
                         }
 
                         case "Department": {
-                            
-                            
+
                             await removeDepartment()
-                            console.log('tes1s')
                             const x = await lastQuestion()
                             console.log(x.lastQ)
                             switch (x.lastQ) {
                                 case true: {
                                     await main()
-
-                                    break;
                                 }
                                 case false: {
-                                    console.log('HAveeee good day')
+                                    console.log('App is Closing')
                                     break;
 
                                 }
@@ -708,18 +713,22 @@ async function main() {
 
                         }
 
-                            
+
                     }
+                    break;
+
                 }
             }
 
+            break;
 
         }
 
 
 
-            await db.close();
     }
+    await db.close();
+
 }
 
 async function lastQuestion() {
@@ -729,5 +738,4 @@ async function lastQuestion() {
 
         }])
 }
-    main();
- 
+main();
