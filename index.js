@@ -105,3 +105,17 @@ async function viewDepartment() {
     let result = await db.query(`select department_name from department`)
 
 }
+
+//View Role
+async function viewRole() {
+    let result = await db.query(`select title from role`)
+
+    console.log(result)
+}
+
+//sum of Department salary
+
+async function salaryDepartment() {
+    let result = await db.query(`SELECT SUM(salary) FROM role left join department on (role.department_id=department.id)`)
+ 
+}
