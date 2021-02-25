@@ -248,4 +248,86 @@ async function addDepartment() {
 
 }
 
+
+// update question
+
+function updateChoice() {
+    return inquirer.prompt([
+        {
+            name: "updateChoice1", message: "What would you like to update", type: "list", choices: ["Employee Role", "Employee Department"]
+        },
+    ])
+}
+
+
+//update Role
+async function updateEmployeRole() {
+    let employees = await db.query(`Select first_name,last_name from employee`)
+    let empArray = []
+
+    employees.forEach(({ first_name, last_name }) => {
+        empArray.push(`${first_name} ${last_name}`)
+
+    })
+
+    let roles = await db.query(`Select title from role`)
+    let roleArray = []
+    roles.forEach(({ title }) => {
+        roleArray.push(title)
+    })
+    let x = await inquirer.prompt([
+        {
+            name: 'chooseEmployee', message: "Choose the Employee First", type: "list", choices: empArray
+        },
+        {
+            name: 'chooseRole', message: "Select The new Role", type: "list", choices: roleArray
+        }
+    ])
+    let nameToId = await db.query(`select id from role where title ="${x.chooseRole}"`)
+
+    let idNumb = []
+    nameToId.forEach(({ id }) => {
+        idNumb.push(id)
+    })
+    let fn = x.chooseEmployee.split(" ")[0]
+    let ln = x.chooseEmployee.split(" ")[1]
+
+    await db.query(`UPDATE employee SET role_id = ${idNumb[0]} WHERE first_name = "${fn}" AND last_name = "${ln}"`)
+    console.log(`${fn} ${ln}'s Role has been Updated Successfully `)
+}
+//Update Department
+async function updateEmployeeDepartment() {
+    let employees = await db.query(`Select id,first_name,last_name from employee `)
+    let empArray = []
+    employees.forEach(({ id, first_name, last_name }) => {
+        empArray.push(`${id} ${first_name} ${last_name}`)
+
+    })
+
+    let x = await inquirer.prompt([
+        {
+            name: 'selectEmployee', message: "Choose Employee that you want to change", type: "list", choices: empArray
+        }
+    ])
+
+
+    let department = await db.query('select id,department_name from department')
+    let departmentArray = []
+    department.forEach(({ id, department_name }) => {
+        departmentArray.push(`${id} ${department_name}`)
+
+    })
+
+    let y = await inquirer.prompt([
+        {
+            name: 'selectDepartment', message: "Choose Department", type: "list", choices: departmentArray
+        }
+    ])
+    let employeeid = Number(x.selectEmployee.split(" ")[0])
+    let departmentid = Number(y.selectDepartment.split(" ")[0])
+
+    let resultOfDep = await db.query(`SELECT id from role WHERE department_id = ${departmentid};`)
+    await db.query(`UPDATE employee Set role_id = ${resultOfDep[0].id} WHERE employee.id = ${employeeid};`)
+    console.log("Department was successfully changed!")
+}
  
