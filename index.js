@@ -82,7 +82,7 @@ async function managerChoice() {
     return result2
 
 }
-/ select employee BY manager choice 
+// select employee BY manager choice 
 
 
 async function viewEmployeeByManager() {
@@ -119,3 +119,133 @@ async function salaryDepartment() {
     let result = await db.query(`SELECT SUM(salary) FROM role left join department on (role.department_id=department.id)`)
  
 }
+// Update/Add/Delete question
+
+function addQuestion() {
+    return inquirer.prompt([
+        { name: "addQuestion1", message: "What would you like to add", type: "list", choices: ["Employee", "Role", "Department"] },
+    ])
+}
+
+// Add  employee
+async function addEmployeeTable() {
+
+    const roleValue = await db.query('select title from role')
+    let role = []
+    role.push("None")
+    roleValue.forEach(({ title }) => {
+        role.push(title)
+    })
+
+    const questions = await inquirer.prompt([
+        {
+            message: "What is the employee's first name?",
+            name: 'firstName'
+        },
+        {
+            message: "What is the employee's last name?",
+            name: 'lastName'
+        },
+        {
+            message: "What is the employee's role?",
+            name: 'role',
+            type: 'list',
+            choices: role
+        },
+        {
+            message: "What role is he manager of ?",
+            type: 'list',
+            choices: role,
+            name: 'managerConfirm'
+        },
+
+    ])
+    let result
+    let manager = []
+    if (questions.managerConfirm === "None") {
+        result = null
+
+    }
+
+    else {
+        result = await db.query(`Select id from role where title ='${questions.managerConfirm}'`)
+
+
+        managerId = await db.query(`Select id from role where title ='${questions.role}'`)
+
+        managerId.forEach(({ id }) => {
+            manager.push(id)
+
+        })
+        manager = Number(manager)
+        console.log(manager)
+
+    }
+
+    let roll = []
+  
+    rolId = await db.query(`Select id from role where title ='${questions.role}'`)
+ 
+    rolId.forEach(({ id }) => {
+        roll.push(id)
+
+    })
+    roll = Number(roll)
+   
+    await db.query('INSERT INTO employee VALUES(?,?,?,?,?)', [0, questions.firstName, questions.lastName, roll, manager])
+
+    let viewEmployee = await db.query(`select * from employee`);
+}
+// Add  Role
+
+async function addRole() {
+    let departments = await db.query(`select department_name from department`);
+    let depArray = []
+    departments.forEach(({ department_name }) => {
+        depArray.push(department_name)
+    })
+  
+    const answer = await inquirer.prompt([
+        {
+            message: 'What is the title of the role?',
+            name: 'title'
+        },
+        {
+            message: 'What is the salary of the role?',
+            name: 'salary'
+        },
+        {
+            message: 'Add it in which department?',
+            type: "list",
+            name: "departmentName",
+            choices: depArray
+        }
+    ])
+    // console.log(answer.departmentName)
+    let departmentId = await db.query(`select department.id from department left join role on department.id=role.department_id where department.department_name = '${answer.departmentName}' `)
+    let depId = []
+    departmentId.forEach(({ id }) => {
+        depId.push(id)
+    })
+    depId = Number(depId[0])
+    let finalResult = await db.query('INSERT INTO role VALUES     (?,?,?,?)', [0, answer.title, answer.salary, depId])
+    return console.log(`${finalResult} has been added to the Roles`)
+}
+
+// Add Department
+
+async function addDepartment() {
+    const answer = await inquirer.prompt([
+        {
+            message: 'What is the name of the department?',
+            name: 'name',
+            type: 'input'
+        }
+    ])
+    finalResult = await db.query('INSERT INTO department VALUES(?,?)', [0, answer.name])
+
+    return console.log(`${finalResult} has been added to the Department`)
+
+}
+
+ 
