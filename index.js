@@ -406,4 +406,319 @@ async function removeDepartment() {
     
 }
 
+
+
+function secondOption() {
+    return inquirer.prompt([
+        {
+            name: "addUpdateDelete", message: "What would you like to do", type: "list",
+            choices: ["Add", "Update", "Remove"]
+        },
+    ])
+}
+
+
+async function main() {
+
+
+
+    const response1 = await askQuestion();
+ 
+
+    switch (response1.firstChoice) {
+        case "View Details":
+            const viewD = await viewDetails()
+            console.log(viewD.viewDetails)
+            switch (viewD.viewDetails) {
+                case "Employees": {
+                    const view1 = await viewEmployee()
+                    switch (view1.viewEmployee1) {
+                        case 'BY department': {
+                            await viewEmployeeByDepartments()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+
+                            break;
+                        }
+                        case "BY manager": {
+                            await viewEmployeeByManager()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+
+                            }
+
+                            break;
+
+
+
+                        }
+
+
+
+                    }
+
+                }
+
+
+                case "Departments": {
+                    await viewDepartment()
+
+                    const x = await lastQuestion()
+                    console.log(x.lastQ)
+                    switch (x.lastQ) {
+                        case true: {
+                            await main()
+                        }
+                        case false: {
+                            console.log('HAveeee good day')
+                            break;
+
+                        }
+
+                    }
+                    break;
+
+
+                }
+                case "Roles": {
+                    await viewRole()
+                    const x = await lastQuestion()
+                    console.log(x.lastQ)
+                    switch (x.lastQ) {
+                        case true: {
+                            await main()
+                        }
+                        case false: {
+                            console.log('HAveeee good day')
+                            break;
+
+                        }
+
+                    }
+                    break;
+                }
+                case "total utilized budget of a department": {
+                    await salaryDepartment()
+                    const x = await lastQuestion()
+                    console.log(x.lastQ)
+                    switch (x.lastQ) {
+                        case true: {
+                            await main()
+                        }
+                        case false: {
+                            console.log('HAveeee good day')
+                            break;
+
+                        }
+
+                    }
+                    break;
+                }
+
+            }
+            // choices: ["Employees", "Departments", "Roles", "total utilized budget of a department"]
+
+            break;
+        case "Update/Add/Delete": {
+
+            let second = await secondOption()
+
+            switch (second.addUpdateDelete) {
+                case 'Add': {
+                    let add = await addQuestion()
+                    switch (add.addQuestion1) {
+                        case "Employee": {
+                            await addEmployeeTable()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+                        case "Role": {
+                            await addRole()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+                        case "Department": {
+                            await addDepartment()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case 'Update': {
+                    let update = await updateChoice()
+                    switch (update.updateChoice1) {
+                        case "Employee Role": {
+                            await updateEmployeRole()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+
+                        case "Employee Department": {
+                            await updateEmployeeDepartment()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case 'Remove': {
+                    console.log("test1")
+                    let remove = await removeChoice()
+                    console.log("test2")
+                    switch (remove.removeChoice1) {
+                        case "Role": {
+                          removeRole()
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+
+                        case "Employee": {
+                            await removeEmployee()
+                            const x =  lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        }
+
+                        case "Department": {
+                            
+                            
+                            await removeDepartment()
+                            console.log('tes1s')
+                            const x = await lastQuestion()
+                            console.log(x.lastQ)
+                            switch (x.lastQ) {
+                                case true: {
+                                    await main()
+
+                                    break;
+                                }
+                                case false: {
+                                    console.log('HAveeee good day')
+                                    break;
+
+                                }
+
+                            }
+                            break;
+
+                        }
+
+                            
+                    }
+                }
+            }
+
+
+        }
+
+
+
+            await db.close();
+    }
+}
  
